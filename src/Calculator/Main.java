@@ -4,51 +4,49 @@ package Calculator;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws BothNotArabicOrRomanException, WrongInputNumbersException, MoreOrLessOperandException, IncorrectOperandException, NegativeRomanNumberException {
+    public static void main(String[] args) throws ArithmeticException, BothNotArabicOrRomanException, WrongInputNumbersException, IncorrectExpressionException, NegativeRomanNumberException {
         Scanner input = new Scanner(System.in);
-        System.out.print("Введите выражение, где каждое число должно быть не больше 10: ");
+        System.out.print("Р’РІРµРґРёС‚Рµ РІС‹СЂР°Р¶РµРЅРёРµ, РіРґРµ РєР°Р¶РґРѕРµ С‡РёСЃР»Рѕ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РЅРµ Р±РѕР»СЊС€Рµ 10: ");
         String expression = input.nextLine().toUpperCase();
         calc(expression);
         input.close();
     }
 
-    public static String calc (String input) throws BothNotArabicOrRomanException, WrongInputNumbersException, MoreOrLessOperandException, IncorrectOperandException, NegativeRomanNumberException {
+    public static String calc (String input) throws ArithmeticException, BothNotArabicOrRomanException, WrongInputNumbersException, IncorrectExpressionException, NegativeRomanNumberException {
         Convert convert = new Convert();
-        //Инициализируем массив для нахождения знака операции в выражении.
+        //РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РјР°СЃСЃРёРІ РґР»СЏ РЅР°С…РѕР¶РґРµРЅРёСЏ Р·РЅР°РєР° РѕРїРµСЂР°С†РёРё РІ РІС‹СЂР°Р¶РµРЅРёРё.
         String[] operator = {"+", "-", "/", "*"};
-        //Инициализируем массив арифметических операций для разбиения строки на операнды и оператор.
+        //РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РјР°СЃСЃРёРІ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёС… РѕРїРµСЂР°С†РёР№ РґР»СЏ СЂР°Р·Р±РёРµРЅРёСЏ СЃС‚СЂРѕРєРё РЅР° РѕРїРµСЂР°РЅРґС‹ Рё РѕРїРµСЂР°С‚РѕСЂ.
         String[] operatorRegex = {"\\+", "-", "/", "\\*"};
-        //Убираем пробелы из строки для её дальнейшего сплита.
+        //РЈР±РёСЂР°РµРј РїСЂРѕР±РµР»С‹ РёР· СЃС‚СЂРѕРєРё РґР»СЏ РµС‘ РґР°Р»СЊРЅРµР№С€РµРіРѕ СЃРїР»РёС‚Р°.
         input = input.replaceAll("\\s", "");
-        //Объявление и инициализация массива для операндов и оператора.
+        //РћР±СЉСЏРІР»РµРЅРёРµ Рё РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РјР°СЃСЃРёРІР° РґР»СЏ РѕРїРµСЂР°РЅРґРѕРІ Рё РѕРїРµСЂР°С‚РѕСЂР°.
         String[] exp = new String[2];
         int index = 0;
-        //Счетчик операторов.
+        //РЎС‡РµС‚С‡РёРє РѕРїРµСЂР°С‚РѕСЂРѕРІ.
         int count = 0;
 
-        //Подсчет количества знаков в строке.
-        for (int i = 0; i < operator.length; i++) {
+        //РџРѕРґСЃС‡РµС‚ РєРѕР»РёС‡РµСЃС‚РІР° Р·РЅР°РєРѕРІ РІ СЃС‚СЂРѕРєРµ.
+        for (String s : operator) {
             String[] tmpArray = input.split("");
             for (int j = 0; j < input.length(); j++) {
-                if (tmpArray[j].equals(operator[i])){
+                if (tmpArray[j].equals(s)) {
                     count++;
                 }
             }
         }
 
-        //Обработка требования к операнду и введённому выражению.
+        //РћР±СЂР°Р±РѕС‚РєР° С‚СЂРµР±РѕРІР°РЅРёСЏ Рє РѕРїРµСЂР°РЅРґСѓ Рё РІРІРµРґС‘РЅРЅРѕРјСѓ РІС‹СЂР°Р¶РµРЅРёСЋ.
         if (count != 1) {
-            throw new MoreOrLessOperandException("Было введено более одного знака операции или знак был пропущен.");
+            throw new IncorrectExpressionException("Р¤РѕСЂРјР°С‚ РІС‹СЂР°Р¶РµРЅРёСЏ РЅРµ СѓРґРѕРІР»РµС‚РІРѕСЂСЏРµС‚ СѓСЃР»РѕРІРёСЋ.");
         }
 
-        //Проверка на содержание корректного знака в выражении.
+        //РџСЂРѕРІРµСЂРєР° РЅР° СЃРѕРґРµСЂР¶Р°РЅРёРµ РєРѕСЂСЂРµРєС‚РЅРѕРіРѕ Р·РЅР°РєР° РІ РІС‹СЂР°Р¶РµРЅРёРё.
         for (int i = 0; i < operator.length; i++) {
             if (input.contains(operator[i])) {
                 exp = input.split(operatorRegex[i]);
                 index = i;
                 break;
-            } else if (i + 1 == operator.length){
-                throw new IncorrectOperandException("Введён некорректный знак операции.");
             }
         }
 
@@ -71,7 +69,7 @@ public class Main {
             }
 
             if (operandOne > 10 || operandTwo > 10) {
-                throw new WrongInputNumbersException("Числа должны быть не больше 10!");
+                throw new WrongInputNumbersException("Р§РёСЃР»Р° РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ РЅРµ Р±РѕР»СЊС€Рµ 10!");
             }
 
             switch (operator[index]) {
@@ -82,7 +80,11 @@ public class Main {
                     result = operandOne - operandTwo;
                     break;
                 case "/":
-                    result = operandOne / operandTwo;
+                    if (operandTwo != 0) {
+                        result = operandOne / operandTwo;
+                    } else {
+                        throw new ArithmeticException("Р”РµР»РёС‚СЊ РЅР° РЅРѕР»СЊ РЅРµР»СЊР·СЏ");
+                    }
                     break;
                 case "*":
                     result = operandOne * operandTwo;
@@ -91,20 +93,20 @@ public class Main {
 
             if(operandsIsRoman) {
                 if (result > 0) {
-                    System.out.printf("Ответ: %s", convert.toRoman(result));
+                    System.out.printf("РћС‚РІРµС‚: %s", convert.toRoman(result));
                     return convert.toRoman(result);
                 } else {
-                    throw new NegativeRomanNumberException("Результатом работы калькулятора с римскими числами могут быть только положительные числа");
+                    throw new NegativeRomanNumberException("Р РµР·СѓР»СЊС‚Р°С‚РѕРј СЂР°Р±РѕС‚С‹ РєР°Р»СЊРєСѓР»СЏС‚РѕСЂР° СЃ СЂРёРјСЃРєРёРјРё С‡РёСЃР»Р°РјРё РјРѕРіСѓС‚ Р±С‹С‚СЊ С‚РѕР»СЊРєРѕ РїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹Рµ С‡РёСЃР»Р°");
                 }
 
             } else {
-                System.out.printf("Ответ: %s", Integer.toString(result));
+                System.out.printf("РћС‚РІРµС‚: %s", Integer.toString(result));
                 return Integer.toString(result);
             }
 
 
         } else {
-            throw new BothNotArabicOrRomanException("Некорректное выражение. Числа должны быть одновременно либо римскими, либо арабскими!");
+            throw new BothNotArabicOrRomanException("РќРµРєРѕСЂСЂРµРєС‚РЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ. Р§РёСЃР»Р° РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ Р»РёР±Рѕ СЂРёРјСЃРєРёРјРё, Р»РёР±Рѕ Р°СЂР°Р±СЃРєРёРјРё!");
         }
     }
 }
